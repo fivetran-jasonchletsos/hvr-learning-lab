@@ -1,4 +1,5 @@
-# Reference design, currently on hold (Docker Desktop isn't permitted on Fivetran Macs) — see lab/README.md before running this.
+# Run this on the team's Linux VM (SSH in first), not on your Mac — Docker Desktop isn't
+# permitted on Fivetran Macs. See lab/README.md for current status before running this.
 services:
   source-db:
     image: postgres:16

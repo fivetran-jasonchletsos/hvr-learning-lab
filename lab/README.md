@@ -25,29 +25,26 @@ a documented, supported pattern (see Architecture: "HVR can also support an agen
 architecture"); Agents are for when you want capture/compression work done on a remote machine
 instead of by the Hub. See Module 11 in the lesson plan for when you'd add one.
 
-## STATUS: local Docker lab is on hold — read this before doing anything below
+## STATUS: moving off local Docker-on-Mac — read this before doing anything below
 
-**Docker Desktop is not permitted on Fivetran-issued Macs.** The Quickstart, Services, and
-Scripts sections below describe a working design, but as written they depend on
-`docker compose`/Docker Desktop and should **not** be run on a company laptop as-is. They're kept
-in this file as reference documentation of the architecture, not as instructions to follow right
-now.
+**Docker Desktop is not permitted on Fivetran-issued Macs.** That was the original blocker for
+running this lab on a company laptop as written. It's resolved now: the team is moving to its own
+Linux VM infrastructure instead of pursuing a shared/cloud environment. A real Linux VM is exactly
+the environment HVR expects — no macOS build exists for the Hub, so this isn't a workaround, it's
+the supported platform. That said, Docker Engine on a Linux VM is a different situation than
+Docker Desktop on a Mac, and shouldn't be assumed fine just because the Mac restriction doesn't
+apply there — confirm it's actually installed/permitted on that VM before relying on it.
 
 What's actually in motion instead:
 
-- **Shared/cloud HVR environment (unconfirmed lead).** There's apparently already a shared or
-  cloud-hosted HVR environment that Fivetran SEs can spin up individually. A colleague named Alan
-  is the contact for this — that conversation hasn't happened yet, so this is **not confirmed or
-  available**, just a lead worth following up on before assuming this local lab is the only path.
-- **Apple's `container` tool — investigated, not adopted.** A colleague asked about
+- **Team-provided Linux VM.** The team already has its own Linux VM infrastructure; exact specs
+  (cloud provider, OS, access pattern) aren't specified yet. Still open (TBD, not yet decided):
+  whether the `docker-compose.yml` in this directory (3 Postgres services + a custom Hub image)
+  gets used as-is on that VM, or gets replaced with fully native installs.
+- **Apple's `container` tool — now moot.** A colleague had asked about
   [github.com/apple/container](https://github.com/apple/container) as a Docker Desktop
-  alternative. It's a genuinely separate open-source Apple tool (Apache 2.0, not built on Docker's
-  tech), so a policy banning "Docker Desktop" specifically might not technically cover it — but
-  whether it's actually policy-compliant is a call for whoever owns that policy, not something to
-  assume. It's also Apple Silicon only, needs macOS 26 for full functionality, and has **no
-  official Docker Compose equivalent** (community tools exist but are partial/unofficial) — so
-  `docker-compose.yml` in this directory (3 Postgres services + a custom Hub image) would need
-  real porting work, not a drop-in swap. Worth piloting later; not a proven replacement today.
+  alternative for running this on a Mac. With the team moving to a real Linux VM instead, that
+  question no longer applies — no need to evaluate it further.
 - **Agent installation is expected to come back as a first-class module.** This lab is currently
   agentless by design (see below). Per team feedback, the manual pain of installing the Hub,
   placing an Agent, and troubleshooting the DB connection is deliberately valuable to experience
@@ -74,7 +71,7 @@ HVR isn't open-source and isn't instantly downloadable. You need:
 
 ## Quickstart
 
-*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+*(Reference design — run this on the team's Linux VM (SSH in), not your Mac. See the status callout above.)*
 
 ```bash
 cd lab
@@ -99,7 +96,7 @@ live changes, and verify with Compare.
 
 ## Services
 
-*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+*(Reference design — run this on the team's Linux VM (SSH in), not your Mac. See the status callout above.)*
 
 | Service | Role | Access |
 |---|---|---|
@@ -110,7 +107,7 @@ live changes, and verify with Compare.
 
 ## Scripts
 
-*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+*(Reference design — run this on the team's Linux VM (SSH in), not your Mac. See the status callout above.)*
 
 - `scripts/prep-source-for-capture.sql` — sets `REPLICA IDENTITY` on the demo tables (Module 4).
 - `scripts/prep-target-for-integrate.sql` — target grants (Module 4).
@@ -119,7 +116,7 @@ live changes, and verify with Compare.
 
 ## Resetting
 
-*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+*(Reference design — run this on the team's Linux VM (SSH in), not your Mac. See the status callout above.)*
 
 ```bash
 docker compose down -v   # wipes all data + the Hub's extracted install, keeps your tarball/license

@@ -89,7 +89,7 @@
     `;
   }
 
-  // ---------- Local Lab ----------
+  // ---------- Lab Environment ----------
   function renderLab() {
     const l = C.lab;
     const prereqs = l.prerequisites.map(p => `<li>${p}</li>`).join("");
