@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Extracts the HVR Hub+Agent tarball on first boot (idempotent — skips if $HVR_HOME/bin already
 # exists, which it will on every restart since hub_home is a named volume), then starts the Hub
-# server in the foreground. Everything past this point (repository DB, license, admin user,
+# server in the foreground. Because of that same idempotency check, dropping a newer/different
+# tarball into lab/installers/ after the first successful extraction has no effect until you
+# `docker compose down -v` to wipe hub_home — there's no re-check on later starts.
+# Everything past this point (repository DB, license, admin user,
 # wallet, hub name) is done once through the browser wizard at http://localhost:4340/ — see
 # Module 2 in the lesson plan and lab/README.md for the exact steps. We deliberately don't script
 # that part: the CLI equivalent (hvrhubserverconfig Repository_Class=... Database_User=...) uses
@@ -12,7 +15,10 @@ set -euo pipefail
 mkdir -p "$HVR_HOME" "$HVR_CONFIG" "$HVR_TMP"
 
 if [ ! -x "$HVR_HOME/bin/hvrhubserver" ]; then
-  TARBALL=$(find /installers -maxdepth 1 -iname 'fivetran-*hub_and_agent-linux_*.tar.gz' | head -n1 || true)
+  # -print0 | xargs ls -t | head -n1, not a bare `find | head -n1`: if more than one tarball
+  # matches (e.g. an old one left behind after a version bump), find's own output order is
+  # filesystem-dependent, not newest-first — sort by mtime instead so the newest file always wins.
+  TARBALL=$(find /installers -maxdepth 1 -iname 'fivetran-*hub_and_agent-linux_*.tar.gz' -print0 | xargs -r -0 ls -t | head -n1 || true)
   if [ -z "${TARBALL:-}" ]; then
     cat <<'EOF'
 

@@ -14,13 +14,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/bash hvr
-USER hvr
-WORKDIR /home/hvr
 
 ENV HVR_HOME=/home/hvr/hvr_home
 ENV HVR_CONFIG=/home/hvr/hvr_config
 ENV HVR_TMP=/home/hvr/hvr_tmp
 ENV PATH="${HVR_HOME}/bin:${PATH}"
+
+# hub_home/hub_config/hvr_tmp are (or will be) Docker named volumes mounted at these exact
+# paths. A freshly created named volume mounts in root-owned, and the "hvr" user below is
+# non-root — without this, entrypoint.sh's `mkdir -p`/`tar xzf` into $HVR_HOME fails with
+# "Permission denied" the first time a real tarball is dropped in.
+RUN mkdir -p "$HVR_HOME" "$HVR_CONFIG" "$HVR_TMP" && chown -R hvr:hvr /home/hvr
+
+USER hvr
+WORKDIR /home/hvr
 
 COPY --chown=hvr:hvr entrypoint.sh /home/hvr/entrypoint.sh
 RUN chmod +x /home/hvr/entrypoint.sh

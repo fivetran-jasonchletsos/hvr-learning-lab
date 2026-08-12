@@ -164,11 +164,17 @@
       progress[id] = !progress[id];
       saveProgress(progress);
       const el = document.getElementById("view-lessons");
+      // Re-rendering replaces every module's markup from scratch, and "open" is only ever
+      // added dynamically (never part of the template) — so without this, checking one module
+      // off would silently collapse every OTHER module the learner had expanded. Capture what
+      // was open first and restore all of it, not just the one that was just toggled.
+      const openIds = Array.from(el.querySelectorAll(".module.open")).map(m => m.dataset.id);
       el.dataset.rendered = "";
       renderView("lessons");
-      // keep the module the user was looking at open after re-render
-      const mod = document.querySelector(`.module[data-id="${id}"]`);
-      if (mod) mod.classList.add("open");
+      openIds.forEach(oid => {
+        const mod = document.querySelector(`.module[data-id="${oid}"]`);
+        if (mod) mod.classList.add("open");
+      });
     },
   };
 
@@ -182,7 +188,10 @@
   updateTabBadge(C.modules.filter(m => progress[m.id]).length, C.modules.length);
 
   const initial = (location.hash || "#overview").slice(1);
-  showView(RENDERERS[initial] ? initial : "overview");
+  // Plain bracket lookup (`RENDERERS[initial]`) would also match inherited Object.prototype
+  // keys like "constructor"/"toString"/"hasOwnProperty", so e.g. a URL ending in #constructor
+  // would bypass the "overview" fallback and try to show a view that doesn't exist.
+  showView(Object.prototype.hasOwnProperty.call(RENDERERS, initial) ? initial : "overview");
 
   // Simple masthead diagram: source -> hub -> target, three boxes and two arrows.
   document.getElementById("masthead-diagram").innerHTML = `

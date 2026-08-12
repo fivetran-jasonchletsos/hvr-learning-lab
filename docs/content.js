@@ -5,11 +5,11 @@ window.HVR_CONTENT = {
     lede: "Fivetran HVR is the enterprise database &amp; file replication product — log-based capture, low-latency continuous replication, and real-time change data capture between DBMSs, not the SaaS-connector side of Fivetran most SEs demo day to day.",
     paragraphs: [
       `This is a personal, hands-on curriculum built from the public <a href="https://fivetran.com/docs/hvr6" target="_blank" rel="noopener">HVR 6 documentation</a>. It pairs a step-by-step lesson plan with a real local lab: a Hub server, a source database, and a target database, all running in Docker so you can actually activate replication, run a refresh, break something, and fix it with Compare — instead of just reading about it.`,
-      `HVR has no macOS build. The Hub Server and Agent are only supported on Linux and Windows. This lab runs the Hub inside a Linux container so it works on a Mac — that's an inference from the plain-glibc-tarball install method, not an officially documented deployment path. See the <a href="#lab" data-view="lab">Local Lab</a> tab for the honest caveats.`,
+      `HVR has no macOS build. The Hub Server is only supported on Linux and Windows (Agent-only installs also run on AIX and Solaris). This lab runs the Hub inside a Linux container so it works on a Mac — that's an inference from the plain-glibc-tarball install method, not an officially documented deployment path. See the <a href="#lab" data-view="lab">Local Lab</a> tab for the honest caveats.`,
       `You'll also need an actual HVR install tarball and license — this isn't open-source software. See the Local Lab tab for where to get it as a Fivetran employee.`,
     ],
     highlights: [
-      { title: "Hub &amp; Agent", body: "One central Hub orchestrates replication; Agents (optional) do capture/integrate work next to a remote database. This lab runs agentless — the Hub connects to Postgres directly." },
+      { title: "Hub & Agent", body: "One central Hub orchestrates replication; Agents (optional) do capture/integrate work next to a remote database. This lab runs agentless — the Hub connects to Postgres directly." },
       { title: "Channel", body: "The logical container: a source Location Group, a target Location Group, a set of tables, and the actions that govern how they replicate." },
       { title: "Capture → Integrate", body: "Capture reads changes out of the source's transaction log; Integrate applies them to the target. Refresh does the bulk initial load; Compare proves the two sides still agree." },
       { title: "11 modules", body: "From standing up the Docker lab through Activate Replication, Refresh, live change capture, and Compare — plus a closing conceptual module on topologies, Agents, and HA." },
@@ -58,7 +58,7 @@ window.HVR_CONTENT = {
         "Optional: create a second, narrower user from the CLI to see the pattern you'd script for onboarding teammates.",
       ],
       commands: [
-        "hvruserconfig -c -A local readonly_user"
+        "# run inside the hvr-hub container: docker compose exec hvr-hub bash, then:\nhvruserconfig -c -A local readonly_user"
       ],
     },
     {
@@ -73,7 +73,7 @@ window.HVR_CONTENT = {
         "Run both prep scripts against their respective databases.",
       ],
       commands: [
-        "psql -h localhost -p 5433 -U hvr_source -d sourcedb -f lab/scripts/prep-source-for-capture.sql\npsql -h localhost -p 5434 -U hvr_target -d targetdb -f lab/scripts/prep-target-for-integrate.sql"
+        "# run from the lab/ directory (where Module 1 left you)\npsql -h localhost -p 5433 -U hvr_source -d sourcedb -f scripts/prep-source-for-capture.sql\npsql -h localhost -p 5434 -U hvr_target -d targetdb -f scripts/prep-target-for-integrate.sql"
       ],
     },
     {
@@ -82,12 +82,12 @@ window.HVR_CONTENT = {
       concepts: ["Location", "Location Group", "Capture vs Integrate capability"],
       objective: "Register source-db and target-db as HVR Locations — agentless, connecting directly over the PostgreSQL protocol.",
       steps: [
-        "In the Hub UI: Create New Location, PostgreSQL, connect directly (no Agent) to <code>source-db:5432 / sourcedb</code> with user <code>hvr_source</code>.",
-        "Repeat for the target: <code>target-db:5432 / targetdb</code> with user <code>hvr_target</code>.",
-        "Once both exist, export their definitions to JSON — this is the round-trip pattern for turning a UI-built config into something you can check into version control and replay.",
+        "In the Hub UI: Create New Location, name it <code>source_pg</code> (later commands and Module 6 assume this exact name), PostgreSQL, connect directly (no Agent) to <code>source-db:5432 / sourcedb</code> with user <code>hvr_source</code>.",
+        "Repeat for the target: name it <code>target_pg</code>, <code>target-db:5432 / targetdb</code> with user <code>hvr_target</code>.",
+        "Once both exist, export their definitions to JSON — this is the round-trip pattern for turning a UI-built config into something you can inspect, back up, or replay outside the Hub UI. (Kept out of git in this repo, since it can contain connection details — see <code>lab/definitions/README.md</code>.)",
       ],
       commands: [
-        "hvrdefinitionexport -l source_pg myhub > lab/definitions/source_pg.json\nhvrdefinitionexport -l target_pg myhub > lab/definitions/target_pg.json"
+        "# run inside the hvr-hub container: docker compose exec hvr-hub bash, then:\nhvrdefinitionexport -l source_pg myhub > \"$HVR_CONFIG/source_pg.json\"\nhvrdefinitionexport -l target_pg myhub > \"$HVR_CONFIG/target_pg.json\"\nexit\n\n# then, from your Mac (lab/ directory), pull them onto your host:\ndocker compose cp hvr-hub:/home/hvr/hvr_config/source_pg.json definitions/source_pg.json\ndocker compose cp hvr-hub:/home/hvr/hvr_config/target_pg.json definitions/target_pg.json"
       ],
     },
     {
@@ -96,7 +96,7 @@ window.HVR_CONTENT = {
       concepts: ["Channel", "One-to-One topology", "Table selection"],
       objective: "Connect the two Locations into a Channel and pick the tables to replicate.",
       steps: [
-        "Create New Channel, name it (lowercase, max 12 characters, e.g. <code>demochn</code>), pick “One to One”.",
+        "Create New Channel, name it <code>demochn</code> (lowercase, max 12 characters — later commands in Modules 7, 8, and 10 assume this exact name), pick “One to One”.",
         "Attach <code>source_pg</code> as the source Location Group and <code>target_pg</code> as the target.",
         "Select Tables: <code>customers</code> and <code>orders</code>. In the UI's default flow, finishing this step (Complete Channel Creation) will also activate replication and run the initial refresh in one click — that's fine, but Modules 7–8 walk through the same two steps deliberately so you know what each one does on its own.",
       ],
@@ -106,13 +106,13 @@ window.HVR_CONTENT = {
       id: "m7",
       title: "Activate Replication",
       concepts: ["Activate Replication", "Jobs", "Scheduler"],
-      objective: "Turn the channel on: this is what creates the Capture and Integrate jobs and hands them to the Scheduler.",
+      objective: "Turn the channel on: Activate Replication registers the channel's jobs with the Scheduler. Which job types start depends on the -J flags you pass (or what the UI dialog defaults to) — the CLI form below explicitly activates Capture and Refresh; don't assume Integrate is or isn't running from the flags alone.",
       steps: [
         "Run Activate Replication for the channel (UI dialog, or the CLI form below).",
-        "Open the Jobs / Topology view and watch the capture and integrate jobs for <code>demochn</code> register and move into a running state.",
+        "Open the Jobs / Topology view and see exactly which jobs for <code>demochn</code> registered and moved into a running state — that's the ground truth, not the flags you typed.",
       ],
       commands: [
-        "hvractivate -J cap -J refr -p2 myhub demochn"
+        "# run inside the hvr-hub container: docker compose exec hvr-hub bash, then:\nhvractivate -J cap -J refr -p2 myhub demochn"
       ],
     },
     {
@@ -125,7 +125,7 @@ window.HVR_CONTENT = {
         "Confirm: query target-db and check the row counts match source-db.",
       ],
       commands: [
-        "hvrrefresh -J integ -s -r source_pg -l target_pg -cbkr -gb -qrw myhub demochn\n\n# verify\npsql -h localhost -p 5434 -U hvr_target -d targetdb -c 'select count(*) from orders;'"
+        "# run inside the hvr-hub container: docker compose exec hvr-hub bash, then:\nhvrrefresh -J integ -s -r source_pg -l target_pg -cbkr -gb -qrw myhub demochn\n\n# then verify — this part runs on your Mac, not the container:\npsql -h localhost -p 5434 -U hvr_target -d targetdb -c 'select count(*) from orders;'"
       ],
     },
     {
@@ -139,7 +139,7 @@ window.HVR_CONTENT = {
         "In the docs, note the difference between Continuous integrate (applies changes as they arrive) and Burst integrate (batches them) — this lab uses whichever the UI defaulted to; check the channel's Integrate action properties to see which.",
       ],
       commands: [
-        "./lab/scripts/generate-changes.sh\n\n# then check the target\npsql -h localhost -p 5434 -U hvr_target -d targetdb -c 'select * from orders order by order_id;'"
+        "# run from the lab/ directory (where Module 1 left you)\n./scripts/generate-changes.sh\n\n# then check the target\npsql -h localhost -p 5434 -U hvr_target -d targetdb -c 'select * from orders order by order_id;'"
       ],
     },
     {
@@ -153,7 +153,7 @@ window.HVR_CONTENT = {
         "Read up on Slicing: for tables far bigger than this lab's five rows, Refresh and Compare can split a table into parallel-processed chunks (modulo, count, boundary, or series slicing) instead of scanning it as one unit.",
       ],
       commands: [
-        "hvrcompare myhub demochn\n# full flag reference: docs Command Line Interface > Command Reference"
+        "# run inside the hvr-hub container: docker compose exec hvr-hub bash, then:\nhvrcompare myhub demochn\n# full flag reference: docs Command Line Interface > Command Reference"
       ],
     },
     {
