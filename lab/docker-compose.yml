@@ -1,0 +1,88 @@
+services:
+  source-db:
+    image: postgres:16
+    container_name: hvr-lab-source
+    environment:
+      POSTGRES_USER: hvr_source
+      POSTGRES_PASSWORD: hvr_source_pw
+      POSTGRES_DB: sourcedb
+    ports:
+      - "5433:5432"
+    volumes:
+      - source_data:/var/lib/postgresql/data
+      - ./init-source:/docker-entrypoint-initdb.d
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_replication_slots=10"
+      - "-c"
+      - "max_wal_senders=10"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hvr_source -d sourcedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  target-db:
+    image: postgres:16
+    container_name: hvr-lab-target
+    environment:
+      POSTGRES_USER: hvr_target
+      POSTGRES_PASSWORD: hvr_target_pw
+      POSTGRES_DB: targetdb
+    ports:
+      - "5434:5432"
+    volumes:
+      - target_data:/var/lib/postgresql/data
+      - ./init-target:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hvr_target -d targetdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  repo-db:
+    image: postgres:16
+    container_name: hvr-lab-repo
+    environment:
+      POSTGRES_USER: hvr_repo
+      POSTGRES_PASSWORD: hvr_repo_pw
+      POSTGRES_DB: hvr_repo
+    ports:
+      - "5435:5432"
+    volumes:
+      - repo_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hvr_repo -d hvr_repo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  hvr-hub:
+    build:
+      context: ./hub
+    container_name: hvr-lab-hub
+    depends_on:
+      repo-db:
+        condition: service_healthy
+      source-db:
+        condition: service_healthy
+      target-db:
+        condition: service_healthy
+    ports:
+      - "4340:4340"   # HVR Hub web UI / REST API (HTTP_Port set by hvrhubserverconfig)
+    volumes:
+      - ./installers:/installers:ro   # drop the fivetran-*-hub_and_agent-linux_*.tar.gz + .lic here yourself
+      - hub_home:/home/hvr/hvr_home
+      - hub_config:/home/hvr/hvr_config
+    stdin_open: true
+    tty: true
+
+volumes:
+  source_data:
+  target_data:
+  repo_data:
+  hub_home:
+  hub_config:

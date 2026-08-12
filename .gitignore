@@ -1,0 +1,5 @@
+.DS_Store
+lab/installers/*
+!lab/installers/.gitkeep
+lab/definitions/*.json
+!lab/definitions/README.md
