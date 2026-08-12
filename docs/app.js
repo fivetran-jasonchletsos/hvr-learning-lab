@@ -54,7 +54,7 @@
             <p>${m.objective}</p>
             <ul class="steps">${steps}</ul>
             ${commands}
-            <div class="module-check" onclick="event.stopPropagation(); HVRApp.toggleDone('${m.id}')" title="Mark complete" style="cursor:pointer; display:inline-flex; margin-top:8px;">${isDone ? "&#10003;" : ""}</div>
+            <div class="module-check" onclick="event.stopPropagation(); HVRApp.toggleDone('${m.id}')" title="Mark complete">${isDone ? "&#10003;" : ""}</div>
             <span class="subtle" style="margin-left:8px; font-size:13px;">${isDone ? "Completed" : "Mark this module complete"}</span>
           </div>
         </div>`;
