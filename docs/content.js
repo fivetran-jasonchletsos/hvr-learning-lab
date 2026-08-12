@@ -175,37 +175,37 @@ window.HVR_CONTENT = {
     lede: "The Hub System orchestrates everything; Locations are the endpoints; a Channel is the logical pipe between them.",
     diagramSvg: `
       <svg viewBox="0 0 640 220" width="100%" height="220" xmlns="http://www.w3.org/2000/svg" style="max-width:640px; display:block; margin:0 auto;">
-        <rect x="10" y="70" width="110" height="60" rx="6" fill="none" stroke="#58d6c4" stroke-width="1.6"/>
-        <text x="65" y="95" font-size="12" fill="#58d6c4" text-anchor="middle" font-family="IBM Plex Mono, monospace">SOURCE</text>
-        <text x="65" y="112" font-size="10.5" fill="#90aab2" text-anchor="middle" font-family="IBM Plex Mono, monospace">Location</text>
+        <rect x="10" y="70" width="110" height="60" rx="6" fill="none" stroke="#4c8dff" stroke-width="1.6"/>
+        <text x="65" y="95" font-size="12" fill="#4c8dff" text-anchor="middle" font-family="IBM Plex Mono, monospace">SOURCE</text>
+        <text x="65" y="112" font-size="10.5" fill="#9aa7c7" text-anchor="middle" font-family="IBM Plex Mono, monospace">Location</text>
 
-        <rect x="255" y="20" width="130" height="160" rx="8" fill="none" stroke="#e8a35c" stroke-width="1.6"/>
-        <text x="320" y="42" font-size="12.5" fill="#e8a35c" text-anchor="middle" font-family="IBM Plex Mono, monospace">HUB</text>
-        <text x="320" y="70" font-size="10" fill="#dceef0" text-anchor="middle" font-family="IBM Plex Mono, monospace">Scheduler</text>
-        <text x="320" y="88" font-size="10" fill="#dceef0" text-anchor="middle" font-family="IBM Plex Mono, monospace">Capture job</text>
-        <text x="320" y="106" font-size="10" fill="#dceef0" text-anchor="middle" font-family="IBM Plex Mono, monospace">Integrate job</text>
-        <text x="320" y="124" font-size="10" fill="#dceef0" text-anchor="middle" font-family="IBM Plex Mono, monospace">Router files</text>
-        <text x="320" y="142" font-size="10" fill="#dceef0" text-anchor="middle" font-family="IBM Plex Mono, monospace">Log files</text>
+        <rect x="255" y="20" width="130" height="160" rx="8" fill="none" stroke="#ff6b47" stroke-width="1.6"/>
+        <text x="320" y="42" font-size="12.5" fill="#ff6b47" text-anchor="middle" font-family="IBM Plex Mono, monospace">HUB</text>
+        <text x="320" y="70" font-size="10" fill="#eef1fa" text-anchor="middle" font-family="IBM Plex Mono, monospace">Scheduler</text>
+        <text x="320" y="88" font-size="10" fill="#eef1fa" text-anchor="middle" font-family="IBM Plex Mono, monospace">Capture job</text>
+        <text x="320" y="106" font-size="10" fill="#eef1fa" text-anchor="middle" font-family="IBM Plex Mono, monospace">Integrate job</text>
+        <text x="320" y="124" font-size="10" fill="#eef1fa" text-anchor="middle" font-family="IBM Plex Mono, monospace">Router files</text>
+        <text x="320" y="142" font-size="10" fill="#eef1fa" text-anchor="middle" font-family="IBM Plex Mono, monospace">Log files</text>
 
-        <rect x="510" y="70" width="110" height="60" rx="6" fill="none" stroke="#58d6c4" stroke-width="1.6"/>
-        <text x="565" y="95" font-size="12" fill="#58d6c4" text-anchor="middle" font-family="IBM Plex Mono, monospace">TARGET</text>
-        <text x="565" y="112" font-size="10.5" fill="#90aab2" text-anchor="middle" font-family="IBM Plex Mono, monospace">Location</text>
+        <rect x="510" y="70" width="110" height="60" rx="6" fill="none" stroke="#4c8dff" stroke-width="1.6"/>
+        <text x="565" y="95" font-size="12" fill="#4c8dff" text-anchor="middle" font-family="IBM Plex Mono, monospace">TARGET</text>
+        <text x="565" y="112" font-size="10.5" fill="#9aa7c7" text-anchor="middle" font-family="IBM Plex Mono, monospace">Location</text>
 
-        <rect x="255" y="190" width="130" height="26" rx="6" fill="none" stroke="#3d6068" stroke-width="1.2"/>
-        <text x="320" y="207" font-size="10" fill="#90aab2" text-anchor="middle" font-family="IBM Plex Mono, monospace">Repository DB</text>
+        <rect x="255" y="190" width="130" height="26" rx="6" fill="none" stroke="#4a5a8a" stroke-width="1.2"/>
+        <text x="320" y="207" font-size="10" fill="#9aa7c7" text-anchor="middle" font-family="IBM Plex Mono, monospace">Repository DB</text>
 
-        <line x1="320" y1="180" x2="320" y2="190" stroke="#3d6068" stroke-width="1.2"/>
-        <line x1="120" y1="100" x2="255" y2="100" stroke="#3d6068" stroke-width="1.4" marker-end="url(#arrow2)"/>
-        <text x="187" y="93" font-size="9.5" fill="#5c7a83" text-anchor="middle" font-family="IBM Plex Mono, monospace">Capture</text>
-        <line x1="385" y1="100" x2="510" y2="100" stroke="#3d6068" stroke-width="1.4" marker-end="url(#arrow2)"/>
-        <text x="447" y="93" font-size="9.5" fill="#5c7a83" text-anchor="middle" font-family="IBM Plex Mono, monospace">Integrate</text>
-        <line x1="65" y1="130" x2="65" y2="150" stroke="#5c7a83" stroke-width="1" stroke-dasharray="3,3"/>
-        <line x1="65" y1="150" x2="565" y2="150" stroke="#5c7a83" stroke-width="1" stroke-dasharray="3,3"/>
-        <line x1="565" y1="150" x2="565" y2="130" stroke="#5c7a83" stroke-width="1" stroke-dasharray="3,3"/>
-        <text x="320" y="163" font-size="9.5" fill="#5c7a83" text-anchor="middle" font-family="IBM Plex Mono, monospace">Compare (bidirectional)</text>
+        <line x1="320" y1="180" x2="320" y2="190" stroke="#4a5a8a" stroke-width="1.2"/>
+        <line x1="120" y1="100" x2="255" y2="100" stroke="#4a5a8a" stroke-width="1.4" marker-end="url(#arrow2)"/>
+        <text x="187" y="93" font-size="9.5" fill="#7684a8" text-anchor="middle" font-family="IBM Plex Mono, monospace">Capture</text>
+        <line x1="385" y1="100" x2="510" y2="100" stroke="#4a5a8a" stroke-width="1.4" marker-end="url(#arrow2)"/>
+        <text x="447" y="93" font-size="9.5" fill="#7684a8" text-anchor="middle" font-family="IBM Plex Mono, monospace">Integrate</text>
+        <line x1="65" y1="130" x2="65" y2="150" stroke="#7684a8" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="65" y1="150" x2="565" y2="150" stroke="#7684a8" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="565" y1="150" x2="565" y2="130" stroke="#7684a8" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="320" y="163" font-size="9.5" fill="#7684a8" text-anchor="middle" font-family="IBM Plex Mono, monospace">Compare (bidirectional)</text>
         <defs>
           <marker id="arrow2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-            <path d="M0,0 L7,3.5 L0,7 Z" fill="#3d6068"/>
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="#4a5a8a"/>
           </marker>
         </defs>
       </svg>`,

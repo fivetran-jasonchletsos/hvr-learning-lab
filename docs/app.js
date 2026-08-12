@@ -49,16 +49,20 @@
             <h3>${esc(m.title)}</h3>
             <span class="module-arrow">&#9656;</span>
           </div>
-          <div class="module-body">
+          <div class="module-body-wrap"><div class="module-body">
             <div class="concepts-row">${pills}</div>
             <p>${m.objective}</p>
             <ul class="steps">${steps}</ul>
             ${commands}
-            <div class="module-check" onclick="event.stopPropagation(); HVRApp.toggleDone('${m.id}')" title="Mark complete">${isDone ? "&#10003;" : ""}</div>
-            <span class="subtle" style="margin-left:8px; font-size:13px;">${isDone ? "Completed" : "Mark this module complete"}</span>
-          </div>
+            <div class="mark-complete" onclick="event.stopPropagation(); HVRApp.toggleDone('${m.id}')">
+              <span class="module-check" title="Mark complete">${isDone ? "&#10003;" : ""}</span>
+              <span class="mark-complete-label">${isDone ? "Completed" : "Mark this module complete"}</span>
+            </div>
+          </div></div>
         </div>`;
     }).join("");
+
+    updateTabBadge(done, total);
 
     return `
       <h2>Lesson Plan</h2>
@@ -67,6 +71,11 @@
       <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${pct}%"></div></div>
       ${modulesHtml}
     `;
+  }
+
+  function updateTabBadge(done, total) {
+    const badge = document.getElementById("tab-badge-lessons");
+    if (badge) badge.textContent = `${done}/${total}`;
   }
 
   // ---------- Architecture ----------
@@ -170,23 +179,25 @@
     showView(a.dataset.view);
   });
 
+  updateTabBadge(C.modules.filter(m => progress[m.id]).length, C.modules.length);
+
   const initial = (location.hash || "#overview").slice(1);
   showView(RENDERERS[initial] ? initial : "overview");
 
   // Simple masthead diagram: source -> hub -> target, three boxes and two arrows.
   document.getElementById("masthead-diagram").innerHTML = `
     <svg viewBox="0 0 220 70" width="220" height="70" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="22" width="56" height="26" rx="4" fill="none" stroke="#58d6c4" stroke-width="1.4"/>
-      <text x="30" y="39" font-size="9" fill="#58d6c4" text-anchor="middle" font-family="IBM Plex Mono, monospace">SOURCE</text>
-      <rect x="82" y="14" width="56" height="42" rx="4" fill="none" stroke="#e8a35c" stroke-width="1.4"/>
-      <text x="110" y="39" font-size="9" fill="#e8a35c" text-anchor="middle" font-family="IBM Plex Mono, monospace">HUB</text>
-      <rect x="162" y="22" width="56" height="26" rx="4" fill="none" stroke="#58d6c4" stroke-width="1.4"/>
-      <text x="190" y="39" font-size="9" fill="#58d6c4" text-anchor="middle" font-family="IBM Plex Mono, monospace">TARGET</text>
-      <line x1="58" y1="35" x2="82" y2="35" stroke="#3d6068" stroke-width="1.4" marker-end="url(#arrow)"/>
-      <line x1="138" y1="35" x2="162" y2="35" stroke="#3d6068" stroke-width="1.4" marker-end="url(#arrow)"/>
+      <rect x="2" y="22" width="56" height="26" rx="4" fill="none" stroke="#4c8dff" stroke-width="1.4"/>
+      <text x="30" y="39" font-size="9" fill="#4c8dff" text-anchor="middle" font-family="IBM Plex Mono, monospace">SOURCE</text>
+      <rect x="82" y="14" width="56" height="42" rx="4" fill="none" stroke="#ff6b47" stroke-width="1.4"/>
+      <text x="110" y="39" font-size="9" fill="#ff6b47" text-anchor="middle" font-family="IBM Plex Mono, monospace">HUB</text>
+      <rect x="162" y="22" width="56" height="26" rx="4" fill="none" stroke="#4c8dff" stroke-width="1.4"/>
+      <text x="190" y="39" font-size="9" fill="#4c8dff" text-anchor="middle" font-family="IBM Plex Mono, monospace">TARGET</text>
+      <line x1="58" y1="35" x2="82" y2="35" stroke="#4a5a8a" stroke-width="1.4" marker-end="url(#arrow)"/>
+      <line x1="138" y1="35" x2="162" y2="35" stroke="#4a5a8a" stroke-width="1.4" marker-end="url(#arrow)"/>
       <defs>
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#3d6068"/>
+          <path d="M0,0 L6,3 L0,6 Z" fill="#4a5a8a"/>
         </marker>
       </defs>
     </svg>`;
