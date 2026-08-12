@@ -49,18 +49,15 @@ What's actually in motion instead:
   `docker-compose.yml` in this directory (3 Postgres services + a custom Hub image) would need
   real porting work, not a drop-in swap. Worth piloting later; not a proven replacement today.
 - **Agent installation is expected to come back as a first-class module.** This lab is currently
-  agentless by design (see below). Two colleagues, Justin and Niraj, pointed out that the manual
-  pain of installing the Hub, placing an Agent, and troubleshooting the DB connection is
-  deliberately valuable to experience by hand — it's exactly where real prospects/customers get
-  stuck. A future redesign of this lab is expected to lean into that instead of scripting it away.
-  That redesign hasn't happened yet; this is a known future direction, not a change made in this
-  pass.
+  agentless by design (see below). Per team feedback, the manual pain of installing the Hub,
+  placing an Agent, and troubleshooting the DB connection is deliberately valuable to experience
+  by hand — it's exactly where real prospects/customers get stuck. A future redesign of this lab
+  is expected to lean into that instead of scripting it away. That redesign hasn't happened yet;
+  this is a known future direction, not a change made in this pass.
 
 ---
 
 ## What you need before this works
-
-*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
 
 HVR isn't open-source and isn't instantly downloadable. You need:
 
