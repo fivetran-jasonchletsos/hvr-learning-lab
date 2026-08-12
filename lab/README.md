@@ -25,7 +25,42 @@ a documented, supported pattern (see Architecture: "HVR can also support an agen
 architecture"); Agents are for when you want capture/compression work done on a remote machine
 instead of by the Hub. See Module 11 in the lesson plan for when you'd add one.
 
+## STATUS: local Docker lab is on hold — read this before doing anything below
+
+**Docker Desktop is not permitted on Fivetran-issued Macs.** The Quickstart, Services, and
+Scripts sections below describe a working design, but as written they depend on
+`docker compose`/Docker Desktop and should **not** be run on a company laptop as-is. They're kept
+in this file as reference documentation of the architecture, not as instructions to follow right
+now.
+
+What's actually in motion instead:
+
+- **Shared/cloud HVR environment (unconfirmed lead).** There's apparently already a shared or
+  cloud-hosted HVR environment that Fivetran SEs can spin up individually. A colleague named Alan
+  is the contact for this — that conversation hasn't happened yet, so this is **not confirmed or
+  available**, just a lead worth following up on before assuming this local lab is the only path.
+- **Apple's `container` tool — investigated, not adopted.** A colleague asked about
+  [github.com/apple/container](https://github.com/apple/container) as a Docker Desktop
+  alternative. It's a genuinely separate open-source Apple tool (Apache 2.0, not built on Docker's
+  tech), so a policy banning "Docker Desktop" specifically might not technically cover it — but
+  whether it's actually policy-compliant is a call for whoever owns that policy, not something to
+  assume. It's also Apple Silicon only, needs macOS 26 for full functionality, and has **no
+  official Docker Compose equivalent** (community tools exist but are partial/unofficial) — so
+  `docker-compose.yml` in this directory (3 Postgres services + a custom Hub image) would need
+  real porting work, not a drop-in swap. Worth piloting later; not a proven replacement today.
+- **Agent installation is expected to come back as a first-class module.** This lab is currently
+  agentless by design (see below). Two colleagues, Justin and Niraj, pointed out that the manual
+  pain of installing the Hub, placing an Agent, and troubleshooting the DB connection is
+  deliberately valuable to experience by hand — it's exactly where real prospects/customers get
+  stuck. A future redesign of this lab is expected to lean into that instead of scripting it away.
+  That redesign hasn't happened yet; this is a known future direction, not a change made in this
+  pass.
+
+---
+
 ## What you need before this works
+
+*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
 
 HVR isn't open-source and isn't instantly downloadable. You need:
 
@@ -41,6 +76,8 @@ HVR isn't open-source and isn't instantly downloadable. You need:
    gitignored, nothing proprietary ever gets committed.
 
 ## Quickstart
+
+*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
 
 ```bash
 cd lab
@@ -65,6 +102,8 @@ live changes, and verify with Compare.
 
 ## Services
 
+*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+
 | Service | Role | Access |
 |---|---|---|
 | `repo-db` | HVR Hub's repository database | `psql -h localhost -p 5435 -U hvr_repo -d hvr_repo` |
@@ -74,12 +113,16 @@ live changes, and verify with Compare.
 
 ## Scripts
 
+*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
+
 - `scripts/prep-source-for-capture.sql` — sets `REPLICA IDENTITY` on the demo tables (Module 4).
 - `scripts/prep-target-for-integrate.sql` — target grants (Module 4).
 - `scripts/generate-changes.sh` — fires an INSERT/UPDATE/DELETE burst at `source-db` so you have
   something for a running Capture/Integrate job to pick up (Module 9).
 
 ## Resetting
+
+*(Reference design — not currently runnable on a Fivetran Mac. See the status callout above.)*
 
 ```bash
 docker compose down -v   # wipes all data + the Hub's extracted install, keeps your tarball/license

@@ -97,6 +97,7 @@
     return `
       <h2>${esc(l.heading)}</h2>
       <p class="lede">${l.lede}</p>
+      <div class="callout warn"><strong>Hold on.</strong> ${l.statusNote}</div>
       <div class="callout warn"><strong>Note.</strong> ${l.macNote}</div>
       <h3>Prerequisites</h3>
       <ul class="steps">${prereqs}</ul>

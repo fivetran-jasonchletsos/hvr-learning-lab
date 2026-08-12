@@ -4,7 +4,7 @@ window.HVR_CONTENT = {
     heading: "What HVR is, and why this lab exists",
     lede: "Fivetran HVR is the enterprise database &amp; file replication product — log-based capture, low-latency continuous replication, and real-time change data capture between DBMSs, not the SaaS-connector side of Fivetran most SEs demo day to day.",
     paragraphs: [
-      `This is a personal, hands-on curriculum built from the public <a href="https://fivetran.com/docs/hvr6" target="_blank" rel="noopener">HVR 6 documentation</a>. It pairs a step-by-step lesson plan with a real local lab: a Hub server, a source database, and a target database, all running in Docker so you can actually activate replication, run a refresh, break something, and fix it with Compare — instead of just reading about it.`,
+      `This is a personal, hands-on curriculum built from the public <a href="https://fivetran.com/docs/hvr6" target="_blank" rel="noopener">HVR 6 documentation</a>, meant to pair a step-by-step lesson plan with a real environment — a Hub server, a source database, and a target database — so you can actually activate replication, run a refresh, break something, and fix it with Compare, instead of just reading about it. <strong>The originally-planned local Docker environment is on hold</strong> — Docker Desktop isn't permitted on Fivetran Macs, and there's apparently already a shared cloud HVR environment SEs can use instead. See the <a href="#lab" data-view="lab">Local Lab</a> tab for the current status.`,
       `HVR has no macOS build. The Hub Server is only supported on Linux and Windows (Agent-only installs also run on AIX and Solaris). This lab runs the Hub inside a Linux container so it works on a Mac — that's an inference from the plain-glibc-tarball install method, not an officially documented deployment path. See the <a href="#lab" data-view="lab">Local Lab</a> tab for the honest caveats.`,
       `You'll also need an actual HVR install tarball and license — this isn't open-source software. See the Local Lab tab for where to get it as a Fivetran employee.`,
     ],
@@ -12,25 +12,25 @@ window.HVR_CONTENT = {
       { title: "Hub & Agent", body: "One central Hub orchestrates replication; Agents (optional) do capture/integrate work next to a remote database. This lab runs agentless — the Hub connects to Postgres directly." },
       { title: "Channel", body: "The logical container: a source Location Group, a target Location Group, a set of tables, and the actions that govern how they replicate." },
       { title: "Capture → Integrate", body: "Capture reads changes out of the source's transaction log; Integrate applies them to the target. Refresh does the bulk initial load; Compare proves the two sides still agree." },
-      { title: "11 modules", body: "From standing up the Docker lab through Activate Replication, Refresh, live change capture, and Compare — plus a closing conceptual module on topologies, Agents, and HA." },
+      { title: "11 modules", body: "From environment setup through Activate Replication, Refresh, live change capture, and Compare — plus a closing conceptual module on topologies, Agents, and HA. The environment these run against is being revisited (see Local Lab)." },
     ],
   },
 
-  lessonsIntro: "Work through these in order. Each one maps to a concept from the docs and a concrete task in the local lab — check them off as you go (saved in your browser, nowhere else).",
+  lessonsIntro: "Work through these in order. Each one maps to a concept from the docs and a concrete task in an environment — check them off as you go (saved in your browser, nowhere else). Module 1 and the Local Lab tab explain why the environment these commands assume (local Docker) is currently on hold; the concepts and sequence still hold regardless of what runs underneath.",
 
   modules: [
     {
       id: "m1",
       title: "Environment bootstrap",
       concepts: ["Hub", "Location", "Agentless architecture", "Supported Platforms"],
-      objective: "Stand up the Docker lab — a repository database, a source database, a target database, and a Hub container — and understand why the Hub has to run inside a Linux container on a Mac.",
+      objective: "PAUSED — this module originally stood up a local Docker lab (repo/source/target Postgres + a Hub container). Docker Desktop isn't permitted on Fivetran Macs, so this needs a different environment before it's actionable. See the Local Lab tab for the current status and don't run the command below on a company laptop.",
       steps: [
         "Read Architecture and HVR Agent in the docs — note the distinction between the Hub System and an Agent, and that HVR supports an agent-less mode where the Hub connects straight to a database over its native protocol.",
         "Read the platform support matrix and confirm for yourself: no macOS anywhere, Linux/Windows for the Hub, plus AIX/Solaris for Agent-only installs.",
-        "Clone this repo if you haven't, then bring up the three Postgres containers first so the Hub has somewhere to point once it's running.",
+        "Check on the shared cloud HVR environment mentioned in team feedback before building anything local — it likely replaces this module entirely.",
       ],
       commands: [
-        "cd lab\ndocker compose up -d repo-db source-db target-db\ndocker compose ps"
+        "# Reference only — see the Local Lab tab before running this.\ncd lab\ndocker compose up -d repo-db source-db target-db\ndocker compose ps"
       ],
     },
     {
@@ -227,15 +227,16 @@ window.HVR_CONTENT = {
 
   lab: {
     heading: "Local Lab",
-    lede: "A Docker Compose stack: a repository database, a source database, a target database, and the HVR Hub itself — everything you need to run every module in the lesson plan against real infrastructure.",
-    macNote: "HVR has no macOS build — Hub and Agent are Linux/Windows only (plus AIX/Solaris for Agent-only). This lab runs the Hub inside a Linux container, which should work (the Linux binaries are a plain glibc 2.28+ tarball with no unusual kernel dependencies) but is <strong>not a documented-supported deployment path</strong> — treat any weirdness as “unofficial setup problem,” not “HVR bug.”",
+    lede: "A Docker Compose stack: a repository database, a source database, a target database, and the HVR Hub itself — a reference environment, currently paused pending a different execution path (see below).",
+    statusNote: "Docker Desktop is <strong>not permitted on Fivetran-issued Macs</strong> — do not run the <code>docker compose</code> commands below on a company laptop. Per team feedback (2026-08), there are already shared cloud HVR environments SEs can spin up individually — ask your account team / Alan before building anything local. Separately: the manual pain of installing the Hub, placing an Agent, and troubleshooting the connection is apparently the single highest-value thing to actually experience here, since it's exactly where prospects get stuck — so once there's a real environment to work in, expect the lesson plan to lean into doing that by hand rather than scripting it away. This section is kept as a reference for the Docker-based design, not as instructions to follow right now.",
+    macNote: "HVR has no macOS build — Hub and Agent are Linux/Windows only (plus AIX/Solaris for Agent-only). This lab's original design ran the Hub inside a Linux container to work around that, which should work technically (the Linux binaries are a plain glibc 2.28+ tarball with no unusual kernel dependencies) but is <strong>not a documented-supported deployment path</strong> — and is moot anyway now that Docker Desktop itself is off the table on a Fivetran Mac.",
     prerequisites: [
-      "Docker Desktop (or another Docker Engine) running on your Mac.",
+      "A non-Docker-Desktop way to run this — a provisioned cloud HVR environment (ask about this first), Colima/Lima (Docker-CLI-compatible, not Docker Desktop), or Apple's native container tooling if it turns out to fit — to be confirmed before anyone actually runs this.",
       "An HVR Hub+Agent Linux tarball and, ideally, a license file — see “Getting the installer” below.",
       "<code>psql</code> on your host machine is convenient for poking at source-db/target-db directly, though not required (the containers have it too).",
     ],
     quickstart: [
-      "git clone https://github.com/fivetran-jasonchletsos/hvr-learning-lab.git\ncd hvr-learning-lab/lab\ndocker compose up -d repo-db source-db target-db\n# drop the tarball + license into ./installers, then:\ndocker compose up --build hvr-hub"
+      "# Reference only — do not run with Docker Desktop on a Fivetran Mac. See the callout above.\ngit clone https://github.com/fivetran-jasonchletsos/hvr-learning-lab.git\ncd hvr-learning-lab/lab\ndocker compose up -d repo-db source-db target-db\n# drop the tarball + license into ./installers, then:\ndocker compose up --build hvr-hub"
     ],
     services: [
       { name: "repo-db", role: "Hub's repository database", access: "psql -h localhost -p 5435 -U hvr_repo -d hvr_repo" },
